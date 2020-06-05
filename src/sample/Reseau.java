@@ -91,20 +91,19 @@ public class Reseau {
 
     public Float rechercheValAnomalie(int annee, int lat, int lon){
         float anomalie = 0f;
-        coordonnee coor = new coordonnee(lat,lon);
         //on parcourt la liste d'année
         for(int an : listeAnnee.keySet()){
             //System.out.println(listeAnnee.get(an).getAnnee());
             int ann = listeAnnee.get(an).getAnnee();
             //si on est dans la bonne année on rentre dans la boucle
-            if (ann == annee){
-                System.out.println(listeAnnee.get(an).listeEtatZone.get(coor));     //null
-                System.out.println(coor);       //sample.coordonnee@73d801b3
-                //pourquoi c'est ppointeur null ?
-                //pk les coordonnées ne correspondent à rien ?
-                anomalie = listeAnnee.get(an).listeEtatZone.get(coor);
-            }else{
-            //System.out.println("Cette année n'est pas prise en compte");
+            if (ann == annee) {
+                //parcours de la liste etat zone pour trouver l'anomalie demandée
+                for (coordonnee key : listeAnnee.get(an).listeEtatZone.keySet()) {
+                    //on teste si les lat et lon sont égaux à ceux de la clé si non on continue à chercher
+                    if (key.getLat() == lat && key.getLon() == lon) {
+                        anomalie = listeAnnee.get(an).listeEtatZone.get(key);
+                    }
+                }
             }
         }
         return anomalie;

@@ -154,7 +154,7 @@ public class FileReader {
             terre.rechercheMinMax();
             System.out.println("La valeur maximale est "+terre.getMaximum());
             System.out.println("La valeur minimale est "+terre.getMinimum());
-            float anomalie = terre.rechercheValAnomalie(2019, -68, -62);
+            float anomalie = terre.rechercheValAnomalie(2020, -68, 62);
             System.out.println(anomalie);
 
         }else{

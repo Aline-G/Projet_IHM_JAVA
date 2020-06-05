@@ -22,12 +22,14 @@ public class Annee {
         return listeEtatZone.get(lieu);
      }
 
-     public Float RecAnomalie(coordonnee coor){
-         for (coordonnee key : listeEtatZone.keySet()) {
-             if (listeEtatZone.get(key).equals(coor)) {
-                 return listeEtatZone.get(key);
+     public Float RecAnomalie(int lat, int lon){
+        float anomalie = 0f;
+        for (coordonnee key : listeEtatZone.keySet()) {
+             //on teste si les lat et lon sont égaux à ceux de la clé et si non on continue à chercher
+             if (key.getLat() == lat && key.getLon() == lon) {
+                 anomalie = listeEtatZone.get(key);
              }
          }
-         return 0f;
+        return anomalie;
      }
 }
