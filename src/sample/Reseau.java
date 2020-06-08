@@ -5,22 +5,23 @@ import java.util.HashMap;
 
 public class Reseau {
 
-    //private HashMap<Integer,Zone> listeZone;
+
     private HashMap<Integer,Annee> listeAnnee;
     private float minimum;
     private float maximum;
 
+    /**
+     * Constructeur du réseau
+     * implémente les attributs du réseau
+     * @param collec tableau de données contenant les valeurs des anomalies, les coordonnées et les années
+     */
     public Reseau(ArrayList<ArrayList<String>> collec){
-        //listeZone = new HashMap<>();
         listeAnnee = new HashMap<>();
-
-        int lat= 0;
-        int lon= 1;
         String s ="NA";
         float etat;
 
         //on parcourt chaque colonne à partir de la colonne 2 pck avant c'est lat et lon
-       for(int j=2; j<143; j++){
+        for(int j=2; j<143; j++){
            //on rentre la bonne année
            int an = 1880+j-2;
            //on crée une nouvelle année
@@ -44,7 +45,9 @@ public class Reseau {
         }
     }
 
-
+    /**
+     * Fonction qui met à jour le minimum et le maximum du réseau
+     */
     public void rechercheMinMax() {
         float min = 0;
         float max = 0;
@@ -69,6 +72,14 @@ public class Reseau {
         this.setMinimum(min);
     }
 
+    /**
+     * Fonction qui cherche une anomalie à partir de l'année, la latitude et la longitude
+     * passées en paramètres
+     * @param annee entier qui représente l'année
+     * @param lat entier qui représente la latitude
+     * @param lon entier qui représente la longitude
+     * @return un float qui correspond à l'anomalie
+     */
     public Float rechercheValAnomalie(int annee, int lat, int lon){
         float anomalie = 0f;
         //on parcourt la liste d'année
@@ -89,13 +100,9 @@ public class Reseau {
         return anomalie;
     }
 
-    /* public void afficherListeZone(){
-        for (int i=0; i<listeZone.size();i++){
-            int lieu = 1880 + i;
-            System.out.println(listeZone.get(lieu));
-        }
-    } */
-
+    /**
+     * Fonction qui affiche les années présentent dans le réseau
+     */
     public void afficherListeAnnee(){
         String s ="";
         //on parcourt la liste d'annee
@@ -105,6 +112,12 @@ public class Reseau {
         }
         System.out.println(s);
     }
+
+    /**
+     * Fonction qui cherche les anomalies pour une année passée en paramètre
+     * @param annee entier qui représente l'année demandée
+     * @return un tableau de float contenant toutes les anomalies
+     */
     public Float[] RecAnomalieAnnee(int annee){
         Float[] tab = new Float[140];
         //on parcourt la liste d'années
@@ -118,6 +131,13 @@ public class Reseau {
         return tab;
     }
 
+    /**
+     * Fonction qui cherche les anomalies pour une zone précise à l'aide des
+     * longitude et latitude passées en paramètres
+     * @param lat entier qui représente la latitude
+     * @param lon entier qui représente la longitude
+     * @return un tableau de float contenant toutes les anomalies
+     */
     public Float[] RecAnomalieZone(int lat, int lon){
         Float[] tab = new Float[141];
         int i = 0;

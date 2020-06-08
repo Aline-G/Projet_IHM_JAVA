@@ -36,17 +36,6 @@ public class FileReader {
             //Read the first line
             String line = bufRead.readLine();
 
-            //Get data from the line
-            //String[] data = line.split(",");
-
-/*
-            if(data.length != 143)
-            {
-                System.out.println("[FileReader] The file at " + csvFilePath + " does not contain the right number of columns.");
-                return;
-            } */
-
-
             //Read the file line by line
             while (line != null)
             {
@@ -122,7 +111,6 @@ public class FileReader {
 
                 line = bufRead.readLine();
             }
-            bufRead.close();
         }
 
         catch (IOException exception)

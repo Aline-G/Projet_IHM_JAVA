@@ -3,14 +3,15 @@ package sample;
 public class coordonnee {
     private int lat;
     private int lon;
-    //private int idCoor;
-    //private int compteur=0;
 
+    /**
+     * Constructeur de coordonnées
+     * @param lat entier qui représente la latitude
+     * @param lon entier qui représente la longitude
+     */
     public coordonnee(int lat, int lon) {
         this.lat = lat;
         this.lon = lon;
-       // compteur++;
-        //this.idCoor=compteur;
     }
 
     public int getLat() {
