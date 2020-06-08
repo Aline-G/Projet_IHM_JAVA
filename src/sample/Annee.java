@@ -36,15 +36,19 @@ public class Annee {
         Float[] tab = new Float[4050];
         int i = 0;
         String s = "";
-        //System.out.println(listeEtatZone.size());
+        //on parcourt les latitudes
         for(int k=-88; k<90; k+=4){
+            //on parcourt les longitudes
             for (int j = -178; j<180; j+=4){
+                //on récupère l'anomalie en appellant la fonction RecAnomalie
                 tab[i] = RecAnomalie(k,j);
+                //pour l'affichage
                 s = s +" "+ tab[i];
+                //pour avanacer dans le tableau tab
                 i++;
             }
         }
-
+        //on affiche les valeurs du tableau
         System.out.println(s);
         return tab;
     }

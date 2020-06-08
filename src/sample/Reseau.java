@@ -5,13 +5,13 @@ import java.util.HashMap;
 
 public class Reseau {
 
-    private HashMap<Integer,Zone> listeZone;
+    //private HashMap<Integer,Zone> listeZone;
     private HashMap<Integer,Annee> listeAnnee;
     private float minimum;
     private float maximum;
 
     public Reseau(ArrayList<ArrayList<String>> collec){
-        listeZone = new HashMap<>();
+        //listeZone = new HashMap<>();
         listeAnnee = new HashMap<>();
 
         int lat= 0;
@@ -42,26 +42,6 @@ public class Reseau {
            }
            this.listeAnnee.put(annee.getAnnee(),annee);
         }
-
-
-/*
-        for(int i=1; i<collec.size();i++){
-            Zone z = new Zone(collec.get(i).get(lat),collec.get(i).get(lon));
-            //System.out.println(collec.get(0).get(5));
-            for(int j=0; j<143; j++){
-                //System.out.println(collec.get(0).get(1));
-                if (collec.get(i).get(j).equals(s)){
-                    z.setEtat(collec.get(0).get(j), 0f);
-                    //System.out.println("dans le if de reseau");
-                }else{
-                    //System.out.println("dans le else de reseau");
-                    z.setEtat(collec.get(0).get(j),Float.parseFloat(collec.get(i).get(j)));
-                }
-            }
-            listeZone.put(z.getIdZone(),z);
-        }
-
-*/
     }
 
 
@@ -109,26 +89,49 @@ public class Reseau {
         return anomalie;
     }
 
-    public void afficherListeZone(){
+    /* public void afficherListeZone(){
         for (int i=0; i<listeZone.size();i++){
             int lieu = 1880 + i;
             System.out.println(listeZone.get(lieu));
         }
-    }
+    } */
+
     public void afficherListeAnnee(){
+        String s ="";
         //on parcourt la liste d'annee
         for (int i=0; i<listeAnnee.size();i++){
             int lieu = 1880 + i;
-            System.out.println(listeAnnee.get(lieu));
+            s= s+" "+listeAnnee.get(lieu).getAnnee();
         }
+        System.out.println(s);
     }
     public Float[] RecAnomalieAnnee(int annee){
         Float[] tab = new Float[140];
+        //on parcourt la liste d'années
         for(int key : listeAnnee.keySet()){
+            //on cherche la bonne année
             if(listeAnnee.get(key).getAnnee()==annee){
+                //on appelle la fonction qui retourne le tableau de valeur pour l'année demandée
                 tab = listeAnnee.get(key).etatZone();
             }
         }
+        return tab;
+    }
+
+    public Float[] RecAnomalieZone(int lat, int lon){
+        Float[] tab = new Float[141];
+        int i = 0;
+        String s = "";
+        //on parcourt la liste d'années
+        for(int key : listeAnnee.keySet()){
+            tab[i]=listeAnnee.get(key).RecAnomalie(lat,lon);
+            //pour l'affichage
+            s = s +" "+ tab[i];
+            //pour avanacer dans le tableau tab
+            i++;
+        }
+        //on affiche les valeurs du tableau
+        System.out.println(s);
         return tab;
     }
 
