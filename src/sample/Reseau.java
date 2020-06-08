@@ -122,6 +122,15 @@ public class Reseau {
             System.out.println(listeAnnee.get(lieu));
         }
     }
+    public Float[] RecAnomalieAnnee(int annee){
+        Float[] tab = new Float[140];
+        for(int key : listeAnnee.keySet()){
+            if(listeAnnee.get(key).getAnnee()==annee){
+                tab = listeAnnee.get(key).etatZone();
+            }
+        }
+        return tab;
+    }
 
     public void setMinimum(float minimum) {
         this.minimum = minimum;

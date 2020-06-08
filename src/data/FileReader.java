@@ -154,8 +154,9 @@ public class FileReader {
             terre.rechercheMinMax();
             System.out.println("La valeur maximale est "+terre.getMaximum());
             System.out.println("La valeur minimale est "+terre.getMinimum());
-            float anomalie = terre.rechercheValAnomalie(2020, -68, 62);
+            float anomalie = terre.rechercheValAnomalie(1952, -88, -178);
             System.out.println(anomalie);
+            terre.RecAnomalieAnnee(1952);
 
         }else{
             System.out.println("[Main] You should enter the CSV file path as a parameters.");
