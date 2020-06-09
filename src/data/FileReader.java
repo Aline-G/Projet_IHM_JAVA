@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class FileReader {
+
     public static void getDataFromCSVFile(String csvFilePath, ArrayList<ArrayList<String>> collec)
     {
         //Document data

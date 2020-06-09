@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class Reseau {
 
 
-    private HashMap<Integer,Annee> listeAnnee;
+    public HashMap<Integer,Annee> listeAnnee;
     private float minimum;
     private float maximum;
 
