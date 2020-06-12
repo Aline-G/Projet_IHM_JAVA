@@ -3,12 +3,11 @@ package test;
 import data.FileReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import sample.Reseau;
+import Application.Reseau;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import static java.lang.Float.NaN;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ReseauTest {

@@ -1,6 +1,5 @@
 package data;
-import sample.Reseau;
-import sample.Annee;
+import Application.Reseau;
 
 import java.io.BufferedReader;
 import java.io.File;
