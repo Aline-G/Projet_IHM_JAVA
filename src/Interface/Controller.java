@@ -136,6 +136,7 @@ public class Controller implements Initializable {
         leg.getChildren().add(cube7);
 
 
+        System.out.println();
 
         //mise à jour de l'etat des rb boutons
         carreRB.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
@@ -168,7 +169,7 @@ public class Controller implements Initializable {
                         nettoyage(root3D);
                     }
                     else if(reseau.isHisto()){
-                        dessinHisto(root3D,reseau,valeurAnnee);
+                        dessinHisto(root3D,reseau,valeurAnnee,c1,c2,c3,c4,c5,c6,c7,c8);
                         nettoyage(root3D);
                     }
 
@@ -286,7 +287,8 @@ public class Controller implements Initializable {
 
     }
 
-   public void dessinHisto(Group parent, Reseau res, int an) {
+   public void dessinHisto(Group parent, Reseau res, int an,PhongMaterial c1,PhongMaterial c2,PhongMaterial c3,PhongMaterial c4,PhongMaterial c5,PhongMaterial c6,PhongMaterial c7,PhongMaterial c8){
+       PhongMaterial mat=c4;
        int compteur =1;
        //on récupère les valeurs des anomalies pour l'anne donnée
        Float[] tabAno = res.RecAnomalieAnnee(an);
@@ -298,8 +300,8 @@ public class Controller implements Initializable {
 
            Point3D yAxis = new Point3D(0, 1, 0);
            Point3D diff = cibleCylindre.subtract(origin);
-           valAno = valAno/2;
-           double hauteur = diff.magnitude() + valAno;
+           //valAno = valAno/100;
+           double hauteur = 1 + 1*valAno;
 
            Point3D mid = cibleCylindre.midpoint(origin);
            Translate moveToMidpoint = new Translate(mid.getX(), mid.getY(), mid.getZ());
@@ -307,9 +309,34 @@ public class Controller implements Initializable {
            Point3D axisOfRotation = diff.crossProduct(yAxis);
            double angle = Math.acos(diff.normalize().dotProduct(yAxis));
            Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
+           if(tabAno[compteur]>-7 && tabAno[compteur]<=-5){
+               mat = c8;
+           }
+           else if(tabAno[compteur]>-5 && tabAno[compteur]<=-3){
+               mat = c7;
+           }
+           else if(tabAno[compteur]>-3 && tabAno[compteur]<=-1){
+               mat = c6;
+           }
+           else if(tabAno[compteur]>-1 && tabAno[compteur]<=0){
+               mat = c5;
+           }
+           else if(tabAno[compteur]>0 && tabAno[compteur]<=1){
+               mat = c4;
+           }
+           else if(tabAno[compteur]>1 && tabAno[compteur]<=3){
+               mat = c3;
+           }
+           else if(tabAno[compteur]>3 && tabAno[compteur]<=5){
+               mat = c2;
+           }
+           else if(tabAno[compteur]>5 && tabAno[compteur]<=9){
+               mat = c1;
+           }
 
            Cylinder line = new Cylinder(0.01f, hauteur);
            line.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
+           line.setMaterial(mat);
            parent.getChildren().addAll(line);
            compteur++;
        }
