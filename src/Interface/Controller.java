@@ -18,10 +18,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Box;
+import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 
 
 import java.net.URL;
@@ -87,8 +90,8 @@ public class Controller implements Initializable {
         c3.setDiffuseColor(new Color(0.2,0.2,0, 0.01));
         c3.setSpecularColor(new Color(0.2,0.2,0, 0.01));
         final PhongMaterial c4 = new PhongMaterial();
-        c4.setDiffuseColor(new Color(0.4,0.6,0.4, 0.01));
-        c4.setSpecularColor(new Color(0.4,0.6,0.4, 0.01));
+        c4.setDiffuseColor(new Color(0.2,0.4,0.2, 0.01));
+        c4.setSpecularColor(new Color(0.2,0.4,0.2, 0.01));
         final PhongMaterial c5 = new PhongMaterial();
         c5.setDiffuseColor(new Color(0.1,0.2,0.5, 0.01));
         c5.setSpecularColor(new Color(0.1,0.2,0.5, 0.01));
@@ -103,14 +106,14 @@ public class Controller implements Initializable {
         c8.setSpecularColor(new Color(0,0,0.5, 0.01));
 
         //Set it to the cube
-        cube.setMaterial(c1);
-        cube1.setMaterial(c2);
-        cube2.setMaterial(c3);
-        cube3.setMaterial(c4);
-        cube4.setMaterial(c5);
-        cube5.setMaterial(c6);
-        cube6.setMaterial(c7);
-        cube7.setMaterial(c8);
+        cube.setMaterial(c8);
+        cube1.setMaterial(c7);
+        cube2.setMaterial(c6);
+        cube3.setMaterial(c5);
+        cube4.setMaterial(c4);
+        cube5.setMaterial(c3);
+        cube6.setMaterial(c2);
+        cube7.setMaterial(c1);
 
         //placement des cubes de légende
         cube.setTranslateY(-2.3);
@@ -161,10 +164,12 @@ public class Controller implements Initializable {
                     }
                     //Appel de la fonction qui modifie l'état de la terre en testant si les rb button
                     if(reseau.isCarre()){
-                        dessinCarre(root3D,reseau,valeurAnnee);
+                        dessinCarre(root3D,reseau,valeurAnnee,c1,c2,c3,c4,c5,c6,c7,c8);
+                        nettoyage(root3D);
                     }
                     else if(reseau.isHisto()){
-                        //dessinHisto(root3D,reseau,valeurAnnee);
+                        dessinHisto(root3D,reseau,valeurAnnee);
+                        nettoyage(root3D);
                     }
 
                 }
@@ -177,32 +182,23 @@ public class Controller implements Initializable {
 
         //Add a camera group
         PerspectiveCamera camera = new PerspectiveCamera(true);
-        PerspectiveCamera cam1 = new PerspectiveCamera(true);
+        PerspectiveCamera cam = new PerspectiveCamera(true);
 
         //Build camera manager
         new CameraManager(camera, pane3D, root3D);
-        new CameraManager(cam1, legende, leg);
-
-        // Add point light
-     /*   PointLight light = new PointLight(Color.WHITE);
-        PointLight lumiere = new PointLight(Color.WHITE);
-        light.setTranslateX(-150);
-        light.setTranslateY(-50);
-        light.setTranslateZ(-50);
-        lumiere.setTranslateX(150);
-        lumiere.setTranslateY(50);
-        lumiere.setTranslateZ(50);
-        light.getScope().addAll(root3D);
-        lumiere.getScope().addAll(root3D);
-        root3D.getChildren().add(light);
-        root3D.getChildren().add(lumiere);
-        */
+        new CameraManager(cam, legende, leg);
 
 
-        //Creation des subscene pour la legende
+        // Add ambient light
+        AmbientLight ambientLight = new AmbientLight(Color.WHITE);
+        ambientLight.getScope().addAll(root3D);
+        root3D.getChildren().add(ambientLight);
+
+
+        //Creation de la subscene pour la legende
         SubScene subLeg = new SubScene(leg,50,118,true,SceneAntialiasing.BALANCED);
         subLeg.setFill(Color.GREY);
-        subLeg.setCamera(cam1);
+        subLeg.setCamera(cam);
         legende.getChildren().addAll(subLeg);
 
         //Create the subscene
@@ -225,32 +221,7 @@ public class Controller implements Initializable {
                         * java.lang.Math.cos(java.lang.Math.toRadians(lat_cor))*radius);
     }
 
-    private void dessinCarre(Group parent, Reseau res, int an){
-        //on initilalise les couleurs
-        final PhongMaterial c1 = new PhongMaterial();
-        c1.setDiffuseColor(new Color(0.5,0,0, 0.01));
-        c1.setSpecularColor(new Color(0.5,0,0, 0.01));
-        final PhongMaterial c2 = new PhongMaterial();
-        c2.setDiffuseColor(new Color(0.5,0.2,0, 0.01));
-        c2.setSpecularColor(new Color(0.5,0.2,0, 0.01));
-        final PhongMaterial c3 = new PhongMaterial();
-        c3.setDiffuseColor(new Color(0.2,0.2,0, 0.01));
-        c3.setSpecularColor(new Color(0.2,0.2,0, 0.01));
-        final PhongMaterial c4 = new PhongMaterial();
-        c4.setDiffuseColor(new Color(0.4,0.6,0.4, 0.01));
-        c4.setSpecularColor(new Color(0.4,0.6,0.4, 0.01));
-        final PhongMaterial c5 = new PhongMaterial();
-        c5.setDiffuseColor(new Color(0.1,0.2,0.5, 0.01));
-        c5.setSpecularColor(new Color(0.1,0.2,0.5, 0.01));
-        final PhongMaterial c6 = new PhongMaterial();
-        c6.setDiffuseColor(new Color(0,0.2,0.2, 0.01));
-        c6.setSpecularColor(new Color(0,0.2,0.2, 0.01));
-        final PhongMaterial c7 = new PhongMaterial();
-        c7.setDiffuseColor(new Color(0,0.2,0.5, 0.01));
-        c7.setSpecularColor(new Color(0,0.2,0.5, 0.01));
-        final PhongMaterial c8 = new PhongMaterial();
-        c8.setDiffuseColor(new Color(0,0,0.5, 0.01));
-        c8.setSpecularColor(new Color(0,0,0.5, 0.01));
+    private void dessinCarre(Group parent, Reseau res, int an, PhongMaterial c1,PhongMaterial c2,PhongMaterial c3,PhongMaterial c4,PhongMaterial c5,PhongMaterial c6,PhongMaterial c7,PhongMaterial c8){
 
         Point3D topRight ;
         Point3D bottomRight;
@@ -259,7 +230,7 @@ public class Controller implements Initializable {
         int compteur =1;
         PhongMaterial mat=c4;
 
-        //on récupère les valeurs des anomalies pour l'anne donnée
+        //on récupère les valeurs des anomalies pour l'année donnée
         Float[] tabAno = res.RecAnomalieAnnee(an);
         //on parcourt toutes les coordonnées et on transforme les coor en pt3D
         for (coordonnee key : res.listeAnnee.get(an).listeEtatZone.keySet()) {
@@ -272,40 +243,78 @@ public class Controller implements Initializable {
             //on choisit la couleur en fonction de la valeur de l'anomalie
             if(tabAno[compteur]>-7 && tabAno[compteur]<=-5){
                 mat = c8;
-                System.out.println("bleu foncé");
             }
             else if(tabAno[compteur]>-5 && tabAno[compteur]<=-3){
                 mat = c7;
-                System.out.println("bleu moins foncé");
             }
             else if(tabAno[compteur]>-3 && tabAno[compteur]<=-1){
                 mat = c6;
-                System.out.println("bleu clair");
             }
             else if(tabAno[compteur]>-1 && tabAno[compteur]<=0){
                 mat = c5;
-                System.out.println("vert bleu");
             }
             else if(tabAno[compteur]>0 && tabAno[compteur]<=1){
                 mat = c4;
-                System.out.println("vert rouge");
             }
             else if(tabAno[compteur]>1 && tabAno[compteur]<=3){
                 mat = c3;
-                System.out.println("jaune");
             }
             else if(tabAno[compteur]>3 && tabAno[compteur]<=5){
                 mat = c2;
-                System.out.println("orange");
             }
             else if(tabAno[compteur]>5 && tabAno[compteur]<=9){
                 mat = c1;
-                System.out.println("rouge");
             }
             AddQuadrilateral(parent, topRight, bottomRight, bottomLeft, topLeft, mat);
             compteur++;
         }
     }
+
+    //elle ne marche pas!!!!!
+   public void nettoyage(Group parent){
+       ObjModelImporter objImporter = new ObjModelImporter();
+       try{
+           URL modelUrl = this.getClass().getResource("Earth/earth.obj");
+           objImporter.read(modelUrl);
+       } catch (ImportException e){
+           //handle exception
+           System.out.println(e.getMessage());
+       }
+       MeshView[] meshViews = objImporter.getImport();
+       Group earth = new Group(meshViews);
+       parent.getChildren().add(earth);
+
+    }
+
+   public void dessinHisto(Group parent, Reseau res, int an) {
+       int compteur =1;
+       //on récupère les valeurs des anomalies pour l'anne donnée
+       Float[] tabAno = res.RecAnomalieAnnee(an);
+       //on parcourt toutes les coordonnées et on transforme les coor en pt3D
+       for (coordonnee key : res.listeAnnee.get(an).listeEtatZone.keySet()) {
+           float valAno = tabAno[compteur];
+           Point3D cibleCylindre = geoCoordTo3dCoord(key.getLat(),key.getLon(),0.01f);
+           Point3D origin = new Point3D(0,0,0);
+
+           Point3D yAxis = new Point3D(0, 1, 0);
+           Point3D diff = cibleCylindre.subtract(origin);
+           valAno = valAno/2;
+           double hauteur = diff.magnitude() + valAno;
+
+           Point3D mid = cibleCylindre.midpoint(origin);
+           Translate moveToMidpoint = new Translate(mid.getX(), mid.getY(), mid.getZ());
+
+           Point3D axisOfRotation = diff.crossProduct(yAxis);
+           double angle = Math.acos(diff.normalize().dotProduct(yAxis));
+           Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
+
+           Cylinder line = new Cylinder(0.01f, hauteur);
+           line.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
+           parent.getChildren().addAll(line);
+           compteur++;
+       }
+   }
+
 
     private void AddQuadrilateral(Group parent, Point3D topRight, Point3D bottomRight, Point3D bottomLeft, Point3D topLeft, PhongMaterial material)
     {
