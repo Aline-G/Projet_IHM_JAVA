@@ -37,6 +37,8 @@ public class Controller implements Initializable {
     @FXML
     Pane pane3D;
     @FXML
+    Pane legende;
+    @FXML
     TextField textAnnee;
     @FXML
     RadioButton carreRB;
@@ -48,6 +50,7 @@ public class Controller implements Initializable {
         ArrayList<ArrayList<String>> donnees = new ArrayList<ArrayList<String>>();
         FileReader.getDataFromCSVFile("src/data/tempanomaly_4x4grid.csv", donnees);
         Group root3D = new Group();
+        Group leg = new Group();
         this.reseau = new Reseau(donnees, this);
 
         // Load geometry
@@ -63,46 +66,72 @@ public class Controller implements Initializable {
         Group earth = new Group(meshViews);
         root3D.getChildren().add(earth);
 
-        //cube de couleurs
-        Box cube = new Box(1, 1, 1);
-        Box cube1 = new Box(1,1,1);
-        Box cube2 = new Box(1,1,1);
-        Box cube3 = new Box(1,1,1);
+        //cube de couleurs pour la légende
+        Box cube = new Box(2.2, 0.65, 1);
+        Box cube1 = new Box(2.2,0.65,1);
+        Box cube2 = new Box(2.2,0.65,1);
+        Box cube3 = new Box(2.2,0.65,1);
+        Box cube4 = new Box(2.2,0.65,1);
+        Box cube5 = new Box(2.2,0.65,1);
+        Box cube6 = new Box(2.2,0.65,1);
+        Box cube7 = new Box(2.2,0.65,1);
 
         //creation des couleurs
+        final PhongMaterial c1 = new PhongMaterial();
+        c1.setDiffuseColor(new Color(0.5,0,0, 0.01));
+        c1.setSpecularColor(new Color(0.5,0,0, 0.01));
+        final PhongMaterial c2 = new PhongMaterial();
+        c2.setDiffuseColor(new Color(0.5,0.2,0, 0.01));
+        c2.setSpecularColor(new Color(0.5,0.2,0, 0.01));
+        final PhongMaterial c3 = new PhongMaterial();
+        c3.setDiffuseColor(new Color(0.2,0.2,0, 0.01));
+        c3.setSpecularColor(new Color(0.2,0.2,0, 0.01));
+        final PhongMaterial c4 = new PhongMaterial();
+        c4.setDiffuseColor(new Color(0.4,0.6,0.4, 0.01));
+        c4.setSpecularColor(new Color(0.4,0.6,0.4, 0.01));
         final PhongMaterial c5 = new PhongMaterial();
-        c5.setDiffuseColor(new Color(0.5,0.5,0.5, 0.01));
-        c5.setSpecularColor(new Color(0.5,0.5,0.5, 0.01));
+        c5.setDiffuseColor(new Color(0.1,0.2,0.5, 0.01));
+        c5.setSpecularColor(new Color(0.1,0.2,0.5, 0.01));
         final PhongMaterial c6 = new PhongMaterial();
-        c6.setDiffuseColor(new Color(0.5,0.2,0, 0.01));
-        c6.setSpecularColor(new Color(0.5,0.2,0, 0.01));
+        c6.setDiffuseColor(new Color(0,0.2,0.2, 0.01));
+        c6.setSpecularColor(new Color(0,0.2,0.2, 0.01));
         final PhongMaterial c7 = new PhongMaterial();
-        c7.setDiffuseColor(new Color(0.5,0,0, 0.01));
-        c7.setSpecularColor(new Color(0,0.1,0.2, 0.01));
+        c7.setDiffuseColor(new Color(0,0.2,0.5, 0.01));
+        c7.setSpecularColor(new Color(0,0.2,0.5, 0.01));
         final PhongMaterial c8 = new PhongMaterial();
         c8.setDiffuseColor(new Color(0,0,0.5, 0.01));
-        c8.setSpecularColor(new Color(0,0,0.2, 0.01));
+        c8.setSpecularColor(new Color(0,0,0.5, 0.01));
 
         //Set it to the cube
-        cube.setMaterial(c5);
-        cube1.setMaterial(c6);
-        cube2.setMaterial(c7);
-        cube3.setMaterial(c8);
+        cube.setMaterial(c1);
+        cube1.setMaterial(c2);
+        cube2.setMaterial(c3);
+        cube3.setMaterial(c4);
+        cube4.setMaterial(c5);
+        cube5.setMaterial(c6);
+        cube6.setMaterial(c7);
+        cube7.setMaterial(c8);
 
-        //placement des cubes
-        cube.setTranslateX(-3);
-        cube1.setTranslateX(-3);
-        cube1.setTranslateY(1);
-        cube2.setTranslateX(-3);
-        cube2.setTranslateY(2);
-        cube3.setTranslateX(-3);
-        cube3.setTranslateY(3);
+        //placement des cubes de légende
+        cube.setTranslateY(-2.3);
+        cube1.setTranslateY(-1.65);
+        cube2.setTranslateY(-1);
+        cube3.setTranslateY(-0.35);
+        cube4.setTranslateY(0.3);
+        cube5.setTranslateY(0.95);
+        cube6.setTranslateY(1.6);
+        cube7.setTranslateY(2.25);
 
         //Add the cube to this node
-        root3D.getChildren().add(cube);
-        root3D.getChildren().add(cube1);
-        root3D.getChildren().add(cube2);
-        root3D.getChildren().add(cube3);
+        leg.getChildren().add(cube);
+        leg.getChildren().add(cube1);
+        leg.getChildren().add(cube2);
+        leg.getChildren().add(cube3);
+        leg.getChildren().add(cube4);
+        leg.getChildren().add(cube5);
+        leg.getChildren().add(cube6);
+        leg.getChildren().add(cube7);
+
 
 
         //mise à jour de l'etat des rb boutons
@@ -119,7 +148,7 @@ public class Controller implements Initializable {
             }
         });
 
-        //Ajout d'evennt sur la zone de texte
+        //Ajout d'event sur la zone de texte
         textAnnee.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -148,20 +177,33 @@ public class Controller implements Initializable {
 
         //Add a camera group
         PerspectiveCamera camera = new PerspectiveCamera(true);
+        PerspectiveCamera cam1 = new PerspectiveCamera(true);
 
         //Build camera manager
         new CameraManager(camera, pane3D, root3D);
+        new CameraManager(cam1, legende, leg);
 
         // Add point light
-        PointLight light = new PointLight(Color.WHITE);
+     /*   PointLight light = new PointLight(Color.WHITE);
         PointLight lumiere = new PointLight(Color.WHITE);
         light.setTranslateX(-150);
         light.setTranslateY(-50);
-        light.setTranslateZ(-10);
+        light.setTranslateZ(-50);
+        lumiere.setTranslateX(150);
+        lumiere.setTranslateY(50);
+        lumiere.setTranslateZ(50);
         light.getScope().addAll(root3D);
         lumiere.getScope().addAll(root3D);
         root3D.getChildren().add(light);
         root3D.getChildren().add(lumiere);
+        */
+
+
+        //Creation des subscene pour la legende
+        SubScene subLeg = new SubScene(leg,50,118,true,SceneAntialiasing.BALANCED);
+        subLeg.setFill(Color.GREY);
+        subLeg.setCamera(cam1);
+        legende.getChildren().addAll(subLeg);
 
         //Create the subscene
         SubScene subscene = new SubScene(root3D, 452.0,393.0, true, SceneAntialiasing.BALANCED);

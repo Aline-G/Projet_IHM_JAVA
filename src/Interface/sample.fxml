@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="486.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Interface.Controller">
    <children>
@@ -63,15 +64,71 @@
             </Button>
             <Button fx:id="buttonStop" mnemonicParsing="false" prefHeight="25.0" prefWidth="91.0" text="Stop">
                <VBox.margin>
-                  <Insets left="40.0" right="40.0" top="10.0" />
+                  <Insets bottom="20.0" left="40.0" right="40.0" top="10.0" />
                </VBox.margin>
             </Button>
+            <Separator prefWidth="200.0" />
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="151.0" text="Légende">
+               <padding>
+                  <Insets bottom="5.0" top="5.0" />
+               </padding>
+            </Label>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Pane fx:id="legende" prefHeight="86.0" prefWidth="69.0" />
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Label text="entre -7 et -5">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <Label text="entre -5 et -3">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <Label text="entre -3 et -1">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <Label text="entre -1 et 0">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <Label text="entre 0 et 1">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <Label text="entre 1 et 3">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <Label text="entre 3 et 5">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                        <Label text="entre 5 et 9">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
          </children>
       </VBox>
       <Separator orientation="VERTICAL" prefHeight="200.0" />
       <VBox fx:id="Vbox2" prefHeight="486.0" prefWidth="459.0">
          <children>
             <Pane fx:id="pane3D" prefHeight="393.0" prefWidth="452.0" />
+            <Separator prefHeight="5.0" prefWidth="424.0" />
             <Slider fx:id="slidAnnee">
                <VBox.margin>
                   <Insets top="40.0" />
