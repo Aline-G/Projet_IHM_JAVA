@@ -134,7 +134,7 @@ public class FileReader {
             }else{
                 System.out.println("[Main] No file " + args[0]);
             }
-            Reseau terre = new Reseau(donnees);
+            /*Reseau terre = new Reseau(donnees);
 
             terre.afficherListeAnnee();
             System.out.println(terre.getMaximum());
@@ -146,6 +146,8 @@ public class FileReader {
             System.out.println(anomalie);
             //terre.RecAnomalieAnnee(1952);
             terre.RecAnomalieZone(12,154);
+
+             */
 
         }else{
             System.out.println("[Main] You should enter the CSV file path as a parameters.");

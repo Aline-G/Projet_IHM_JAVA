@@ -7,10 +7,10 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="486.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Interface.Controller">
    <children>
@@ -25,8 +25,11 @@
                <padding>
                   <Insets left="10.0" />
                </padding>
+               <toggleGroup>
+                  <ToggleGroup fx:id="choix" />
+               </toggleGroup>
             </RadioButton>
-            <RadioButton fx:id="histoRB" mnemonicParsing="false" prefHeight="17.0" prefWidth="146.0" text="Histogrammes">
+            <RadioButton fx:id="histoRB" mnemonicParsing="false" prefHeight="17.0" prefWidth="146.0" text="Histogrammes" toggleGroup="$choix">
                <padding>
                   <Insets bottom="10.0" left="10.0" top="5.0" />
                </padding>
@@ -68,7 +71,7 @@
       <Separator orientation="VERTICAL" prefHeight="200.0" />
       <VBox fx:id="Vbox2" prefHeight="486.0" prefWidth="459.0">
          <children>
-            <Pane fx:id="Pane3D" prefHeight="393.0" prefWidth="452.0" />
+            <Pane fx:id="pane3D" prefHeight="393.0" prefWidth="452.0" />
             <Slider fx:id="slidAnnee">
                <VBox.margin>
                   <Insets top="40.0" />

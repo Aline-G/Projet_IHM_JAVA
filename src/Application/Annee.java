@@ -1,17 +1,18 @@
 package Application;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Annee {
     private int annee;
-    public HashMap<coordonnee,Float> listeEtatZone;
+    public LinkedHashMap<coordonnee,Float> listeEtatZone;
 
     /**
      * Constructeur d'année
      * @param annee entier qui représente l'année crée
      */
     public Annee(int annee) {
-        this.listeEtatZone = new HashMap<>();
+        this.listeEtatZone = new LinkedHashMap<>();
         this.annee = annee;
     }
 

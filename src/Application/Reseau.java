@@ -1,5 +1,7 @@
 package Application;
 
+import Interface.Controller;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,16 +11,20 @@ public class Reseau {
     public HashMap<Integer,Annee> listeAnnee;
     private float minimum;
     private float maximum;
+    Controller controller;
+    private boolean Carre =false;
+    private boolean Histo = false;
 
     /**
      * Constructeur du réseau
      * implémente les attributs du réseau
      * @param collec tableau de données contenant les valeurs des anomalies, les coordonnées et les années
      */
-    public Reseau(ArrayList<ArrayList<String>> collec){
+    public Reseau(ArrayList<ArrayList<String>> collec, Controller controller){
         listeAnnee = new HashMap<>();
         String s ="NA";
         float etat;
+        this.controller = controller;
 
         //on parcourt chaque colonne à partir de la colonne 2 pck avant c'est lat et lon
         for(int j=2; j<143; j++){
@@ -171,4 +177,19 @@ public class Reseau {
         return maximum;
     }
 
+    public boolean isCarre() {
+        return Carre;
+    }
+
+    public boolean isHisto() {
+        return Histo;
+    }
+
+    public void setCarre(boolean carre) {
+        Carre = carre;
+    }
+
+    public void setHisto(boolean histo) {
+        Histo = histo;
+    }
 }
