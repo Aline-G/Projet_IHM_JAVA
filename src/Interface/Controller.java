@@ -132,7 +132,7 @@ public class Controller implements Initializable {
         c8.setDiffuseColor(new Color(0,0,0.1, opacity));
         c8.setSpecularColor(new Color(0,0,0.1, opacity));
 
-        //Set it to the cube
+        //On les ajoute sur les cubes
         cube.setMaterial(c8);
         cube1.setMaterial(c7);
         cube2.setMaterial(c6);
@@ -152,7 +152,7 @@ public class Controller implements Initializable {
         cube6.setTranslateY(1.6);
         cube7.setTranslateY(2.25);
 
-        //Add the cube to this node
+        //on ajoute les cubes à leg
         leg.getChildren().add(cube);
         leg.getChildren().add(cube1);
         leg.getChildren().add(cube2);
@@ -211,8 +211,7 @@ public class Controller implements Initializable {
             }
         });
 
-
-        //Marche pas !!!
+        //ANIMATION
         final long startNanoTime = System.nanoTime();
         int currentspeed = 1;
         //création de l'animation
@@ -243,6 +242,7 @@ public class Controller implements Initializable {
         };
 
 
+        //Ajout des événements liés aux boutons
         buttonPlay.setOnAction(event -> { ani.start(); });
         buttonPause.setOnAction(event -> { ani.stop(); });
         buttonStop.setOnAction(event -> {
@@ -298,6 +298,11 @@ public class Controller implements Initializable {
                         * java.lang.Math.cos(java.lang.Math.toRadians(lat_cor))*radius);
     }
 
+    /**
+     * Fonction qui crée le quadrillage de carrés et le mets en mémoire
+     * @param parent groupe auquel on ajoute les carrés
+     * @param res représente le réseau qui contient toutes les données
+     */
     private void Quadrillage(Group parent, Reseau res){
         Point3D topRight ;
         Point3D bottomRight;
@@ -317,8 +322,8 @@ public class Controller implements Initializable {
     }
 
     /**
-     * Fonction qui dessine les carrés avec la bonne couleur en fonction de la valeur de l'anomalie pour une année donnée
-     *
+     * Fonction qui colorie les carrés avec la bonne couleur en fonction de la valeur de l'anomalie pour une année donnée
+     * @param parent représente le groupe auquel sont associés les carrés
      * @param res représente le réseau qui contient toutes les données
      * @param an représente l'année selectionnée
      * @param c1 représente la couleur 1
