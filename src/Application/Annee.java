@@ -24,9 +24,6 @@ public class Annee {
         return listeEtatZone;
     }
 
-    public Float getEtat(coordonnee lieu){
-        return listeEtatZone.get(lieu);
-    }
 
     /**
      * Fonction qui cherche les anomalies pour une zone précise à l'aide des
@@ -53,21 +50,16 @@ public class Annee {
     public Float[] etatZone(){
         Float[] tab = new Float[4050];
         int i = 0;
-        String s = "";
         //on parcourt les latitudes
         for(int k=-88; k<90; k+=4){
             //on parcourt les longitudes
             for (int j = -178; j<180; j+=4){
                 //on récupère l'anomalie en appellant la fonction RecAnomalie
                 tab[i] = RecAnomalie(k,j);
-                //pour l'affichage
-                s = s +" "+ tab[i];
                 //pour avanacer dans le tableau tab
                 i++;
             }
         }
-        //on affiche les valeurs du tableau
-        System.out.println(s);
         return tab;
     }
 }

@@ -4,6 +4,9 @@ import Application.Reseau;
 import Application.coordonnee;
 import data.FileReader;
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -11,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -29,7 +33,9 @@ import javafx.scene.transform.Translate;
 
 
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -37,6 +43,8 @@ public class Controller implements Initializable {
     private static final float TEXTURE_LON_OFFSET = 2.8f;
 
     private Reseau reseau;
+    private LinkedHashMap<coordonnee,MeshView> quadrillage;
+    private int annee = 1880;
 
     @FXML
     Pane pane3D;
@@ -50,6 +58,10 @@ public class Controller implements Initializable {
     RadioButton histoRB;
     @FXML
     Slider slidAnnee;
+    @FXML
+    Button buttonPlay;
+    @FXML
+    Button buttonStop;
 
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -58,6 +70,7 @@ public class Controller implements Initializable {
         Group root3D = new Group();
         Group leg = new Group();
         this.reseau = new Reseau(donnees, this);
+        this.quadrillage = new LinkedHashMap<>();
 
         //initialisation du slider
         slidAnnee.setMax(2020);
@@ -66,6 +79,9 @@ public class Controller implements Initializable {
         slidAnnee.setShowTickMarks(true);
         slidAnnee.setBlockIncrement(10);
         slidAnnee.setMajorTickUnit(20);
+
+        //initialisation du quadrillage
+        Quadrillage(root3D,reseau);
 
         // Load geometry
         ObjModelImporter objImporter = new ObjModelImporter();
@@ -148,8 +164,6 @@ public class Controller implements Initializable {
         leg.getChildren().add(cube7);
 
 
-        System.out.println();
-
         //mise à jour de l'etat des rb boutons
         carreRB.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
@@ -178,11 +192,16 @@ public class Controller implements Initializable {
                     //Appel de la fonction qui modifie l'état de la terre en testant si les rb button
                     if(reseau.isCarre()){
                         nettoyage(root3D);
+                        slidAnnee.setValue(valeurAnnee);
                         dessinCarre(root3D,reseau,valeurAnnee,c1,c2,c3,c4,c5,c6,c7,c8);
                     }
                     else if(reseau.isHisto()){
                         nettoyage(root3D);
+                        slidAnnee.setValue(valeurAnnee);
                         dessinHisto(root3D,reseau,valeurAnnee,c1,c2,c3,c4,c5,c6,c7,c8);
+                    }
+                    else{
+                        System.out.println("Sélectionnez un mode");
                     }
 
                 }
@@ -192,6 +211,50 @@ public class Controller implements Initializable {
                 }
             }
         });
+
+
+        //Marche pas !!!
+        final long startNanoTime = System.nanoTime();
+        int currentspeed = 1;
+        //création de l'animation
+        AnimationTimer ani = new AnimationTimer() {
+            @Override
+            public void handle(long currentNanoTime) {
+                double t = (currentNanoTime-startNanoTime)/1000000000.0;
+                slidAnnee.setValue((double)annee);
+                //on teste quel mode est choisi si l'année n'est pas trop grande
+                if(reseau.isCarre() && annee<2021 ){
+                    System.out.println(annee);
+                    slidAnnee.setValue(annee);
+                    nettoyage(root3D);
+                    dessinCarre(root3D,reseau,annee,c1,c2,c3,c4,c5,c6,c7,c8);
+                    annee ++;
+                }
+                if(reseau.isHisto() && t%currentspeed>0.98 && annee<2021 ){
+                    slidAnnee.setValue(annee);
+                    nettoyage(root3D);
+                    dessinHisto(root3D,reseau,annee,c1,c2,c3,c4,c5,c6,c7,c8);
+                    annee ++;
+                }
+                    /*if(reseau.isHisto()){
+                        nettoyage(root3D);
+                        dessinHisto(root3D,reseau,i,c1,c2,c3,c4,c5,c6,c7,c8);
+                    }else if(reseau.isCarre()){
+                        nettoyage(root3D);
+                        dessinCarre(root3D,reseau,i,c1,c2,c3,c4,c5,c6,c7,c8);
+                    }else{ // ça ne s'arrête jamais
+                        System.out.println("Sélectionnez un mode");
+                    }*/
+                if(annee>=2021){
+                    this.stop();
+                }
+            }
+        };
+
+
+        buttonPlay.setOnAction(event -> { ani.start(); });
+        buttonStop.setOnAction(event -> { ani.stop(); });
+
 
         //Add a camera group
         PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -240,9 +303,27 @@ public class Controller implements Initializable {
                         * java.lang.Math.cos(java.lang.Math.toRadians(lat_cor))*radius);
     }
 
+    private void Quadrillage(Group parent, Reseau res){
+        Point3D topRight ;
+        Point3D bottomRight;
+        Point3D topLeft;
+        Point3D bottomLeft;
+
+        for (coordonnee key : res.listeAnnee.get(1880).listeEtatZone.keySet()) {
+
+            bottomLeft = geoCoordTo3dCoord(key.getLat() - 2, key.getLon() - 2, 1.05f);
+            bottomRight = geoCoordTo3dCoord(key.getLat() - 2, key.getLon() + 2, 1.05f);
+            topLeft = geoCoordTo3dCoord(key.getLat() + 2, key.getLon() - 2, 1.05f);
+            topRight = geoCoordTo3dCoord(key.getLat() + 2, key.getLon() + 2, 1.05f);
+
+            coordonnee coor = new coordonnee(key.getLat(),key.getLon());
+            this.quadrillage.put(coor,AddQuadrilateral(parent,topRight,bottomRight,bottomLeft,topLeft));
+        }
+    }
+
     /**
      * Fonction qui dessine les carrés avec la bonne couleur en fonction de la valeur de l'anomalie pour une année donnée
-     * @param parent représente le groupe auquel on va ajouter les carrés dessinés
+     *
      * @param res représente le réseau qui contient toutes les données
      * @param an représente l'année selectionnée
      * @param c1 représente la couleur 1
@@ -254,51 +335,40 @@ public class Controller implements Initializable {
      * @param c7 représente la couleur 7
      * @param c8 représnete la couleur 8
      */
-    private void dessinCarre(Group parent, Reseau res, int an, PhongMaterial c1,PhongMaterial c2,PhongMaterial c3,PhongMaterial c4,PhongMaterial c5,PhongMaterial c6,PhongMaterial c7,PhongMaterial c8){
+    private void dessinCarre(Group parent,Reseau res, int an, PhongMaterial c1,PhongMaterial c2,PhongMaterial c3,PhongMaterial c4,PhongMaterial c5,PhongMaterial c6,PhongMaterial c7,PhongMaterial c8){
 
-        Point3D topRight ;
-        Point3D bottomRight;
-        Point3D topLeft;
-        Point3D bottomLeft;
-        int compteur =1;
-        PhongMaterial mat=c4;
-
+        int compteur =0;
         //on récupère les valeurs des anomalies pour l'année donnée
         Float[] tabAno = res.RecAnomalieAnnee(an);
-        //on parcourt toutes les coordonnées et on transforme les coor en pt3D
-        for (coordonnee key : res.listeAnnee.get(an).listeEtatZone.keySet()) {
-
-            bottomLeft = geoCoordTo3dCoord(key.getLat() - 2, key.getLon() - 2, 1.05f);
-            bottomRight = geoCoordTo3dCoord(key.getLat() - 2, key.getLon()+2, 1.05f);
-            topLeft = geoCoordTo3dCoord(key.getLat()+2, key.getLon() - 2, 1.05f);
-            topRight = geoCoordTo3dCoord(key.getLat()+2, key.getLon()+2, 1.05f);
+        //on parcourt toutes les coordonnées dans le quadrillage
+        for (coordonnee key : quadrillage.keySet()) {
 
             //on choisit la couleur en fonction de la valeur de l'anomalie
             if(tabAno[compteur]>-7 && tabAno[compteur]<=-5){
-                mat = c8;
+                quadrillage.get(key).setMaterial(c8);
             }
             else if(tabAno[compteur]>-5 && tabAno[compteur]<=-3){
-                mat = c7;
+                quadrillage.get(key).setMaterial(c7);
             }
             else if(tabAno[compteur]>-3 && tabAno[compteur]<=-1){
-                mat = c6;
+                quadrillage.get(key).setMaterial(c6);
             }
             else if(tabAno[compteur]>-1 && tabAno[compteur]<=0){
-                mat = c5;
+                quadrillage.get(key).setMaterial(c5);
             }
             else if(tabAno[compteur]>0 && tabAno[compteur]<=1){
-                mat = c4;
+                quadrillage.get(key).setMaterial(c4);
             }
             else if(tabAno[compteur]>1 && tabAno[compteur]<=3){
-                mat = c3;
+                quadrillage.get(key).setMaterial(c3);
             }
             else if(tabAno[compteur]>3 && tabAno[compteur]<=5){
-                mat = c2;
+                quadrillage.get(key).setMaterial(c2);
             }
             else if(tabAno[compteur]>5 && tabAno[compteur]<=9){
-                mat = c1;
+                quadrillage.get(key).setMaterial(c1);
             }
-            AddQuadrilateral(parent, topRight, bottomRight, bottomLeft, topLeft, mat);
+            parent.getChildren().add(quadrillage.get(key));
             compteur++;
         }
     }
@@ -339,7 +409,7 @@ public class Controller implements Initializable {
      */
    public void dessinHisto(Group parent, Reseau res, int an,PhongMaterial c1,PhongMaterial c2,PhongMaterial c3,PhongMaterial c4,PhongMaterial c5,PhongMaterial c6,PhongMaterial c7,PhongMaterial c8){
        PhongMaterial mat=c4;
-       int compteur =1;
+       int compteur =0;
        //on récupère les valeurs des anomalies pour l'anne donnée
        Float[] tabAno = res.RecAnomalieAnnee(an);
        //on parcourt toutes les coordonnées et on transforme les coor en pt3D
@@ -371,11 +441,11 @@ public class Controller implements Initializable {
                hauteur = 1 + 1*-valAno;
                mat = c6;
            }
-           else if(tabAno[compteur]>-1 && tabAno[compteur]<=0){
+           else if(tabAno[compteur]>-1 && tabAno[compteur]<0){
                hauteur = 1 + 1*-valAno;
                mat = c5;
            }
-           else if(tabAno[compteur]>0 && tabAno[compteur]<=1){
+           else if(tabAno[compteur]>=0 && tabAno[compteur]<=1){
                mat = c4;
            }
            else if(tabAno[compteur]>1 && tabAno[compteur]<=3){
@@ -396,8 +466,7 @@ public class Controller implements Initializable {
        }
    }
 
-
-    private void AddQuadrilateral(Group parent, Point3D topRight, Point3D bottomRight, Point3D bottomLeft, Point3D topLeft, PhongMaterial material)
+    private MeshView AddQuadrilateral(Group parent, Point3D topRight, Point3D bottomRight, Point3D bottomLeft, Point3D topLeft)
     {
         final TriangleMesh triangleMesh = new TriangleMesh();
         final float[] points = {
@@ -422,9 +491,12 @@ public class Controller implements Initializable {
         triangleMesh.getFaces().setAll(faces);
 
         final MeshView meshView = new MeshView(triangleMesh);
-        meshView.setMaterial(material);
-        parent.getChildren().addAll(meshView);
+        //meshView.setMaterial(material);
+        //parent.getChildren().addAll(meshView);
+        return meshView;
+
     }
+
     private void carreClick(MouseEvent event) {
         reseau.setCarre(true);
         reseau.setHisto(false);
