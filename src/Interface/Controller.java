@@ -14,10 +14,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -62,6 +59,8 @@ public class Controller implements Initializable {
     Button buttonPlay;
     @FXML
     Button buttonStop;
+    @FXML
+    Button buttonPause;
 
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -236,24 +235,20 @@ public class Controller implements Initializable {
                     dessinHisto(root3D,reseau,annee,c1,c2,c3,c4,c5,c6,c7,c8);
                     annee ++;
                 }
-                    /*if(reseau.isHisto()){
-                        nettoyage(root3D);
-                        dessinHisto(root3D,reseau,i,c1,c2,c3,c4,c5,c6,c7,c8);
-                    }else if(reseau.isCarre()){
-                        nettoyage(root3D);
-                        dessinCarre(root3D,reseau,i,c1,c2,c3,c4,c5,c6,c7,c8);
-                    }else{ // ça ne s'arrête jamais
-                        System.out.println("Sélectionnez un mode");
-                    }*/
                 if(annee>=2021){
                     this.stop();
+                    annee = 1880;
                 }
             }
         };
 
 
         buttonPlay.setOnAction(event -> { ani.start(); });
-        buttonStop.setOnAction(event -> { ani.stop(); });
+        buttonPause.setOnAction(event -> { ani.stop(); });
+        buttonStop.setOnAction(event -> {
+            ani.stop();
+            annee = 1880;
+        });
 
 
         //Add a camera group
