@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -47,6 +48,8 @@ public class Controller implements Initializable {
     RadioButton carreRB;
     @FXML
     RadioButton histoRB;
+    @FXML
+    Slider slidAnnee;
 
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -55,6 +58,14 @@ public class Controller implements Initializable {
         Group root3D = new Group();
         Group leg = new Group();
         this.reseau = new Reseau(donnees, this);
+
+        //initialisation du slider
+        slidAnnee.setMax(2020);
+        slidAnnee.setMin(1880);
+        slidAnnee.setShowTickLabels(true);
+        slidAnnee.setShowTickMarks(true);
+        slidAnnee.setBlockIncrement(10);
+        slidAnnee.setMajorTickUnit(20);
 
         // Load geometry
         ObjModelImporter objImporter = new ObjModelImporter();
@@ -80,30 +91,31 @@ public class Controller implements Initializable {
         Box cube7 = new Box(2.2,0.65,1);
 
         //creation des couleurs
+        double opacity = 0.05;
         final PhongMaterial c1 = new PhongMaterial();
-        c1.setDiffuseColor(new Color(0.5,0,0, 0.01));
-        c1.setSpecularColor(new Color(0.5,0,0, 0.01));
+        c1.setDiffuseColor(new Color(0.5,0,0, opacity));
+        c1.setSpecularColor(new Color(0.5,0,0, opacity));
         final PhongMaterial c2 = new PhongMaterial();
-        c2.setDiffuseColor(new Color(0.5,0.2,0, 0.01));
-        c2.setSpecularColor(new Color(0.5,0.2,0, 0.01));
+        c2.setDiffuseColor(new Color(0.5,0.2,0, opacity));
+        c2.setSpecularColor(new Color(0.5,0.2,0, opacity));
         final PhongMaterial c3 = new PhongMaterial();
-        c3.setDiffuseColor(new Color(0.2,0.2,0, 0.01));
-        c3.setSpecularColor(new Color(0.2,0.2,0, 0.01));
+        c3.setDiffuseColor(new Color(0.5,0.5,0, opacity));
+        c3.setSpecularColor(new Color(0.5,0.5,0, opacity));
         final PhongMaterial c4 = new PhongMaterial();
-        c4.setDiffuseColor(new Color(0.2,0.4,0.2, 0.01));
-        c4.setSpecularColor(new Color(0.2,0.4,0.2, 0.01));
+        c4.setDiffuseColor(new Color(0.2,0.4,0.2, opacity));
+        c4.setSpecularColor(new Color(0.2,0.4,0.2, opacity));
         final PhongMaterial c5 = new PhongMaterial();
-        c5.setDiffuseColor(new Color(0.1,0.2,0.5, 0.01));
-        c5.setSpecularColor(new Color(0.1,0.2,0.5, 0.01));
+        c5.setDiffuseColor(new Color(0.1,0.2,0.5, opacity));
+        c5.setSpecularColor(new Color(0.1,0.2,0.5, opacity));
         final PhongMaterial c6 = new PhongMaterial();
-        c6.setDiffuseColor(new Color(0,0.2,0.2, 0.01));
-        c6.setSpecularColor(new Color(0,0.2,0.2, 0.01));
+        c6.setDiffuseColor(new Color(0,0,0.6, opacity));
+        c6.setSpecularColor(new Color(0,0,0.6, opacity));
         final PhongMaterial c7 = new PhongMaterial();
-        c7.setDiffuseColor(new Color(0,0.2,0.5, 0.01));
-        c7.setSpecularColor(new Color(0,0.2,0.5, 0.01));
+        c7.setDiffuseColor(new Color(0,0,0.3, opacity));
+        c7.setSpecularColor(new Color(0,0,0.3, opacity));
         final PhongMaterial c8 = new PhongMaterial();
-        c8.setDiffuseColor(new Color(0,0,0.5, 0.01));
-        c8.setSpecularColor(new Color(0,0,0.5, 0.01));
+        c8.setDiffuseColor(new Color(0,0,0.1, opacity));
+        c8.setSpecularColor(new Color(0,0,0.1, opacity));
 
         //Set it to the cube
         cube.setMaterial(c8);
@@ -165,12 +177,12 @@ public class Controller implements Initializable {
                     }
                     //Appel de la fonction qui modifie l'état de la terre en testant si les rb button
                     if(reseau.isCarre()){
-                        dessinCarre(root3D,reseau,valeurAnnee,c1,c2,c3,c4,c5,c6,c7,c8);
                         nettoyage(root3D);
+                        dessinCarre(root3D,reseau,valeurAnnee,c1,c2,c3,c4,c5,c6,c7,c8);
                     }
                     else if(reseau.isHisto()){
-                        dessinHisto(root3D,reseau,valeurAnnee,c1,c2,c3,c4,c5,c6,c7,c8);
                         nettoyage(root3D);
+                        dessinHisto(root3D,reseau,valeurAnnee,c1,c2,c3,c4,c5,c6,c7,c8);
                     }
 
                 }
@@ -210,7 +222,13 @@ public class Controller implements Initializable {
     }
 
 
-
+    /**
+     * Fonction qui prend en paramètres des coordonnées et retourne un point3D
+     * @param lat représente la latitude
+     * @param lon représente la longitude
+     * @param radius représente le rayon de la sphère sur laquelle se situe les coordonnées
+     * @return un point3D
+     */
     public static Point3D geoCoordTo3dCoord(float lat, float lon, float radius) {
         float lat_cor = lat + TEXTURE_LAT_OFFSET;
         float lon_cor = lon + TEXTURE_LON_OFFSET;
@@ -222,6 +240,20 @@ public class Controller implements Initializable {
                         * java.lang.Math.cos(java.lang.Math.toRadians(lat_cor))*radius);
     }
 
+    /**
+     * Fonction qui dessine les carrés avec la bonne couleur en fonction de la valeur de l'anomalie pour une année donnée
+     * @param parent représente le groupe auquel on va ajouter les carrés dessinés
+     * @param res représente le réseau qui contient toutes les données
+     * @param an représente l'année selectionnée
+     * @param c1 représente la couleur 1
+     * @param c2 représente lacouleur 2
+     * @param c3 représente la couleur 3
+     * @param c4 représente la couleur 4
+     * @param c5 représente la couleur 5
+     * @param c6 représente la couleur 6
+     * @param c7 représente la couleur 7
+     * @param c8 représnete la couleur 8
+     */
     private void dessinCarre(Group parent, Reseau res, int an, PhongMaterial c1,PhongMaterial c2,PhongMaterial c3,PhongMaterial c4,PhongMaterial c5,PhongMaterial c6,PhongMaterial c7,PhongMaterial c8){
 
         Point3D topRight ;
@@ -271,8 +303,12 @@ public class Controller implements Initializable {
         }
     }
 
-    //elle ne marche pas!!!!!
+    /**
+     * Fonction qui permet d'enlever les affichages précédents de la Terre
+     * @param parent représente le groupe que l'on va clear
+     */
    public void nettoyage(Group parent){
+       parent.getChildren().clear();
        ObjModelImporter objImporter = new ObjModelImporter();
        try{
            URL modelUrl = this.getClass().getResource("Earth/earth.obj");
@@ -285,8 +321,22 @@ public class Controller implements Initializable {
        Group earth = new Group(meshViews);
        parent.getChildren().add(earth);
 
-    }
+   }
 
+    /**
+     * Fonction qui dessine des histogrammes proportionnels à la valeurs des anomalies et de bonnes couleurs
+     * @param parent représente le groupe auquel on va ajouter les carrés dessinés
+     * @param res représente le réseau qui contient toutes les données
+     * @param an représente l'année selectionnée
+     * @param c1 représente la couleur 1
+     * @param c2 représente lacouleur 2
+     * @param c3 représente la couleur 3
+     * @param c4 représente la couleur 4
+     * @param c5 représente la couleur 5
+     * @param c6 représente la couleur 6
+     * @param c7 représente la couleur 7
+     * @param c8 représnete la couleur 8
+     */
    public void dessinHisto(Group parent, Reseau res, int an,PhongMaterial c1,PhongMaterial c2,PhongMaterial c3,PhongMaterial c4,PhongMaterial c5,PhongMaterial c6,PhongMaterial c7,PhongMaterial c8){
        PhongMaterial mat=c4;
        int compteur =1;
@@ -310,15 +360,19 @@ public class Controller implements Initializable {
            double angle = Math.acos(diff.normalize().dotProduct(yAxis));
            Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
            if(tabAno[compteur]>-7 && tabAno[compteur]<=-5){
+               hauteur = 1 + 1*-valAno;
                mat = c8;
            }
            else if(tabAno[compteur]>-5 && tabAno[compteur]<=-3){
+               hauteur = 1 + 1*-valAno;
                mat = c7;
            }
            else if(tabAno[compteur]>-3 && tabAno[compteur]<=-1){
+               hauteur = 1 + 1*-valAno;
                mat = c6;
            }
            else if(tabAno[compteur]>-1 && tabAno[compteur]<=0){
+               hauteur = 1 + 1*-valAno;
                mat = c5;
            }
            else if(tabAno[compteur]>0 && tabAno[compteur]<=1){
