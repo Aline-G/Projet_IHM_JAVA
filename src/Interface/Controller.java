@@ -1,12 +1,8 @@
 package Interface;
-import Application.Annee;
 import Application.Reseau;
 import Application.coordonnee;
 import data.FileReader;
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -30,7 +26,6 @@ import javafx.scene.transform.Translate;
 
 
 import java.net.URL;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
@@ -42,6 +37,7 @@ public class Controller implements Initializable {
     private Reseau reseau;
     private LinkedHashMap<coordonnee,MeshView> quadrillage;
     private int annee = 1880;
+    private int speed = 1;
 
     @FXML
     Pane pane3D;
@@ -53,6 +49,12 @@ public class Controller implements Initializable {
     RadioButton carreRB;
     @FXML
     RadioButton histoRB;
+    @FXML
+    RadioButton vit1;
+    @FXML
+    RadioButton vit5;
+    @FXML
+    RadioButton vit10;
     @FXML
     Slider slidAnnee;
     @FXML
@@ -176,6 +178,18 @@ public class Controller implements Initializable {
                 histoClick(mouseEvent);
             }
         });
+        vit1.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) { vit1Click(mouseEvent); }
+        });
+        vit5.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) { vit5Click(mouseEvent); }
+        });
+        vit10.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) { vit10Click(mouseEvent); }
+        });
 
         //Ajout d'event sur la zone de texte
         textAnnee.textProperty().addListener(new ChangeListener<String>() {
@@ -211,24 +225,25 @@ public class Controller implements Initializable {
             }
         });
 
+///je ne vois vraiment pas commen régler la vitesse
         //ANIMATION
         final long startNanoTime = System.nanoTime();
-        int currentspeed = 1;
         //création de l'animation
         AnimationTimer ani = new AnimationTimer() {
             @Override
             public void handle(long currentNanoTime) {
-                double t = (currentNanoTime-startNanoTime)/1000000000.0;
+                //double t = (currentNanoTime-startNanoTime)/1000000000.0;
                 slidAnnee.setValue((double)annee);
                 //on teste quel mode est choisi si l'année n'est pas trop grande
                 if(reseau.isCarre() && annee<2021 ){
                     System.out.println(annee);
+                    System.out.println(speed);
                     slidAnnee.setValue(annee);
                     nettoyage(root3D);
                     dessinCarre(root3D,reseau,annee,c1,c2,c3,c4,c5,c6,c7,c8);
                     annee ++;
                 }
-                if(reseau.isHisto() && t%currentspeed>0.98 && annee<2021 ){
+                if(reseau.isHisto() && annee<2021 ){
                     slidAnnee.setValue(annee);
                     nettoyage(root3D);
                     dessinHisto(root3D,reseau,annee,c1,c2,c3,c4,c5,c6,c7,c8);
@@ -500,12 +515,24 @@ public class Controller implements Initializable {
     private void carreClick(MouseEvent event) {
         reseau.setCarre(true);
         reseau.setHisto(false);
-
     }
     private void histoClick(MouseEvent event) {
         reseau.setCarre(false);
         reseau.setHisto(true);
+    }
 
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    private void vit1Click(MouseEvent event) {
+        setSpeed(1);
+    }
+    private void vit5Click(MouseEvent event) {
+        setSpeed(5);
+    }
+    private void vit10Click(MouseEvent event) {
+        setSpeed(10);
     }
 }
 
