@@ -1,6 +1,5 @@
 package Application;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class Annee {
@@ -20,11 +19,6 @@ public class Annee {
         return annee;
     }
 
-    public HashMap<coordonnee, Float> getListeEtatZone() {
-        return listeEtatZone;
-    }
-
-
     /**
      * Fonction qui cherche les anomalies pour une zone précise à l'aide des
      * longitude et latitude passées en paramètres
@@ -32,7 +26,7 @@ public class Annee {
      * @param lon entier qui représente la longitude
      * @return un float qui correspond à l'anomalie
      */
-    public Float RecAnomalie(int lat, int lon){
+    public Float recAnomalie(int lat, int lon){
        float anomalie = 0f;
        for (coordonnee key : listeEtatZone.keySet()) {
             //on teste si les lat et lon sont égaux à ceux de la clé et si non on continue à chercher
@@ -50,15 +44,10 @@ public class Annee {
     public Float[] etatZone(){
         Float[] tab = new Float[4050];
         int i = 0;
-        //on parcourt les latitudes
-        for(int k=-88; k<90; k+=4){
-            //on parcourt les longitudes
-            for (int j = -178; j<180; j+=4){
-                //on récupère l'anomalie en appellant la fonction RecAnomalie
-                tab[i] = RecAnomalie(k,j);
-                //pour avanacer dans le tableau tab
-                i++;
-            }
+        //on parcourt les coordonnées
+        for (coordonnee key : listeEtatZone.keySet()){
+            tab[i]=recAnomalie(key.getLat(),key.getLon());
+            i++;
         }
         return tab;
     }

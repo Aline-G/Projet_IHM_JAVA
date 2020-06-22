@@ -12,6 +12,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.PickResult;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
@@ -63,6 +64,10 @@ public class Controller implements Initializable {
     Button buttonStop;
     @FXML
     Button buttonPause;
+    @FXML
+    Label latVar;
+    @FXML
+    Label lonVar;
 
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -73,18 +78,12 @@ public class Controller implements Initializable {
         this.reseau = new Reseau(donnees, this);
         this.quadrillage = new LinkedHashMap<>();
 
-        //initialisation du slider
-        slidAnnee.setMax(2020);
-        slidAnnee.setMin(1880);
-        slidAnnee.setShowTickLabels(true);
-        slidAnnee.setShowTickMarks(true);
-        slidAnnee.setBlockIncrement(10);
-        slidAnnee.setMajorTickUnit(20);
+
 
         //initialisation du quadrillage
         Quadrillage(root3D,reseau);
 
-        // Load geometry
+        // Chargement de le geometry de la terre
         ObjModelImporter objImporter = new ObjModelImporter();
         try{
             URL modelUrl = this.getClass().getResource("Earth/earth.obj");
@@ -225,23 +224,40 @@ public class Controller implements Initializable {
             }
         });
 
-///je ne vois vraiment pas commen régler la vitesse
+        //pour la partie sélectionner un lieu
+        //new PickResult(Node node, Point3D point, double distance, int face, Point2D texCoord);
+
+///je ne vois vraiment pas comment régler la vitesse
         //ANIMATION
-        final long startNanoTime = System.nanoTime();
         //création de l'animation
         AnimationTimer ani = new AnimationTimer() {
+            //final long startNanoTime = System.nanoTime();
             @Override
             public void handle(long currentNanoTime) {
-                //double t = (currentNanoTime-startNanoTime)/1000000000.0;
+                //double t = (currentNanoTime-startNanoTime)/(1000000000.0/speed);
                 slidAnnee.setValue((double)annee);
                 //on teste quel mode est choisi si l'année n'est pas trop grande
                 if(reseau.isCarre() && annee<2021 ){
                     System.out.println(annee);
                     System.out.println(speed);
                     slidAnnee.setValue(annee);
+                    textAnnee.textProperty().setValue(String.valueOf(annee));
                     nettoyage(root3D);
                     dessinCarre(root3D,reseau,annee,c1,c2,c3,c4,c5,c6,c7,c8);
+                    int tmp = speed;
+                    //C'est pas ouf ça fait bcp tourner le pc pour pas grand chose
+                    int val = 1000;
+                    val=(int)Math.round(val/speed);
+                    for(int i =0; i<val;  i++ ){
+                        //System.out.println(tmp = tmp-1);
+                    }
+                    /*
+                    while(10-speed!=0){
+                        speed = speed -1;
+                    }
+                    */
                     annee ++;
+                    //speed=tmp;
                 }
                 if(reseau.isHisto() && annee<2021 ){
                     slidAnnee.setValue(annee);
@@ -265,6 +281,16 @@ public class Controller implements Initializable {
             annee = 1880;
         });
 
+        //event qui permet de récupérer les coordonnées sur le globe pointées par la souris
+        root3D.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event){
+                PickResult pick = event.getPickResult();
+                cursorToCoords(pick,reseau);
+                latVar.setText(reseau.getLatValue()+"");
+                lonVar.setText(reseau.getLonValue()+"");
+            }
+        });
 
         //Add a camera group
         PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -354,7 +380,7 @@ public class Controller implements Initializable {
 
         int compteur =0;
         //on récupère les valeurs des anomalies pour l'année donnée
-        Float[] tabAno = res.RecAnomalieAnnee(an);
+        Float[] tabAno = res.recAnomalieAnnee(an);
         //on parcourt toutes les coordonnées dans le quadrillage
         for (coordonnee key : quadrillage.keySet()) {
 
@@ -425,18 +451,20 @@ public class Controller implements Initializable {
    public void dessinHisto(Group parent, Reseau res, int an,PhongMaterial c1,PhongMaterial c2,PhongMaterial c3,PhongMaterial c4,PhongMaterial c5,PhongMaterial c6,PhongMaterial c7,PhongMaterial c8){
        PhongMaterial mat=c4;
        int compteur =0;
-       //on récupère les valeurs des anomalies pour l'anne donnée
-       Float[] tabAno = res.RecAnomalieAnnee(an);
+       //on récupère les valeurs des anomalies pour l'année donnée
+       Float[] tabAno = res.recAnomalieAnnee(an);
        //on parcourt toutes les coordonnées et on transforme les coor en pt3D
        for (coordonnee key : res.listeAnnee.get(an).listeEtatZone.keySet()) {
+           //on récupère la valeur de l'anomalie pour chaque coordonnées
            float valAno = tabAno[compteur];
-           Point3D cibleCylindre = geoCoordTo3dCoord(key.getLat(),key.getLon(),0.01f);
-           Point3D origin = new Point3D(0,0,0);
+           Point3D cibleCylindre = geoCoordTo3dCoord(key.getLat(),key.getLon(),1.2f);
+           Point3D origin = geoCoordTo3dCoord(key.getLat(),key.getLon(),1f);
+           //Point3D origin = new Point3D(0,0,0);
 
            Point3D yAxis = new Point3D(0, 1, 0);
            Point3D diff = cibleCylindre.subtract(origin);
            //valAno = valAno/100;
-           double hauteur = 1 + 1*valAno;
+           double hauteur = valAno;
 
            Point3D mid = cibleCylindre.midpoint(origin);
            Translate moveToMidpoint = new Translate(mid.getX(), mid.getY(), mid.getZ());
@@ -445,19 +473,19 @@ public class Controller implements Initializable {
            double angle = Math.acos(diff.normalize().dotProduct(yAxis));
            Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
            if(tabAno[compteur]>-7 && tabAno[compteur]<=-5){
-               hauteur = 1 + 1*-valAno;
+               hauteur = -valAno;
                mat = c8;
            }
            else if(tabAno[compteur]>-5 && tabAno[compteur]<=-3){
-               hauteur = 1 + 1*-valAno;
+               hauteur = -valAno;
                mat = c7;
            }
            else if(tabAno[compteur]>-3 && tabAno[compteur]<=-1){
-               hauteur = 1 + 1*-valAno;
+               hauteur = -valAno;
                mat = c6;
            }
            else if(tabAno[compteur]>-1 && tabAno[compteur]<0){
-               hauteur = 1 + 1*-valAno;
+               hauteur = -valAno;
                mat = c5;
            }
            else if(tabAno[compteur]>=0 && tabAno[compteur]<=1){
@@ -511,6 +539,19 @@ public class Controller implements Initializable {
         return meshView;
 
     }
+
+    /**
+     * Fonction qui transforme les coordonnées du pointeur de la souris en coordonnées (longitude et latitude)
+     * @param result valeur du pointeur de la souris
+     * @param res représente le réseau dans lequel est stocké la valeur des données récupérées
+     */
+    public static void cursorToCoords(PickResult result, Reseau res)
+    {
+        Point3D coor = result.getIntersectedPoint();
+        res.setLatValue((int)  Math.round(-Math.toDegrees(Math.asin(coor.getY() / Math.sqrt(Math.pow(coor.getX(), 2) + Math.pow(coor.getY(), 2) + Math.pow(coor.getZ(), 2))) ) /4)*4);
+        res.setLonValue((int)  Math.round(-Math.toDegrees(Math.atan2(coor.getX(), coor.getZ()) ) /4)*4);
+    }
+
 
     private void carreClick(MouseEvent event) {
         reseau.setCarre(true);

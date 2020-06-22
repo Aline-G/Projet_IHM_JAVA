@@ -13,7 +13,7 @@ public class Terre extends Application {
     public void start(Stage primaryStage) {
         try{
             Parent content = FXMLLoader.load(getClass().getResource("sample.fxml"));
-            primaryStage.setTitle("Changement de température");
+            primaryStage.setTitle("Modélisation des changements de température");
             primaryStage.setScene(new Scene(content));
             primaryStage.show();
         } catch (IOException e) {

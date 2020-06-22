@@ -4,7 +4,6 @@ import Interface.Controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 public class Reseau {
 
@@ -15,6 +14,8 @@ public class Reseau {
     Controller controller;
     private boolean Carre =false;
     private boolean Histo = false;
+    private int latValue=-88;
+    private int lonValue=-176;
 
     /**
      * Constructeur du réseau
@@ -74,7 +75,7 @@ public class Reseau {
                 }
             }
         }
-        //Mise à jour des donnéée du réseau
+        //Mise à jour des données du réseau
         this.setMaximum(max);
         this.setMinimum(min);
     }
@@ -125,7 +126,7 @@ public class Reseau {
      * @param annee entier qui représente l'année demandée
      * @return un tableau de float contenant toutes les anomalies
      */
-    public Float[] RecAnomalieAnnee(int annee){
+    public Float[] recAnomalieAnnee(int annee){
         Float[] tab = new Float[140];
         //on parcourt la liste d'années
         for(int key : listeAnnee.keySet()){
@@ -145,16 +146,16 @@ public class Reseau {
      * @param lon entier qui représente la longitude
      * @return un tableau de float contenant toutes les anomalies
      */
-    public Float[] RecAnomalieZone(int lat, int lon){
+    public Float[] recAnomalieZone(int lat, int lon){
         Float[] tab = new Float[141];
         int i = 0;
         String s = "";
         //on parcourt la liste d'années
         for(int key : listeAnnee.keySet()){
-            tab[i]=listeAnnee.get(key).RecAnomalie(lat,lon);
+            tab[i]=listeAnnee.get(key).recAnomalie(lat,lon);
             //pour l'affichage
             s = s +" "+ tab[i];
-            //pour avanacer dans le tableau tab
+            //pour avancer dans le tableau tab
             i++;
         }
         //on affiche les valeurs du tableau
@@ -193,4 +194,12 @@ public class Reseau {
     public void setHisto(boolean histo) {
         Histo = histo;
     }
+
+    public int getLatValue() { return latValue; }
+
+    public int getLonValue() { return lonValue; }
+
+    public void setLatValue(int latValue) { this.latValue = latValue; }
+
+    public void setLonValue(int lonValue) { this.lonValue = lonValue; }
 }
