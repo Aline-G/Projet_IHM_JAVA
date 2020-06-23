@@ -9,7 +9,11 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point3D;
+import javafx.geometry.Side;
 import javafx.scene.*;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.PickResult;
@@ -24,6 +28,7 @@ import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.stage.Stage;
 
 
 import java.net.URL;
@@ -68,6 +73,8 @@ public class Controller implements Initializable {
     Label latVar;
     @FXML
     Label lonVar;
+    @FXML
+    CheckBox graphique;
 
 
     public void initialize(URL location, ResourceBundle resources) {
@@ -189,6 +196,10 @@ public class Controller implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) { vit10Click(mouseEvent); }
         });
+        graphique.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) { graphClick(mouseEvent); }
+        });
 
         //Ajout d'event sur la zone de texte
         textAnnee.textProperty().addListener(new ChangeListener<String>() {
@@ -272,7 +283,6 @@ public class Controller implements Initializable {
             }
         };
 
-
         //Ajout des événements liés aux boutons
         buttonPlay.setOnAction(event -> { ani.start(); });
         buttonPause.setOnAction(event -> { ani.stop(); });
@@ -281,16 +291,38 @@ public class Controller implements Initializable {
             annee = 1880;
         });
 
+        Pane graph = new Pane();
+        Scene secondScene = new Scene(graph, 500, 300);
+        //on crée les axes du graphique
+        final NumberAxis xAxis = new NumberAxis(1880, 2020, 20);
+        final NumberAxis yAxis = new NumberAxis();
+        //on crée le graphique
+        final AreaChart<Number, Number> areaChart = new AreaChart<Number, Number>(xAxis, yAxis);
+        areaChart.setMaxSize(500,300);
+
+
         //event qui permet de récupérer les coordonnées sur le globe pointées par la souris
         root3D.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent event){
                 PickResult pick = event.getPickResult();
-                cursorToCoords(pick,reseau);
+                sourisToCoords(pick,reseau);
                 latVar.setText(reseau.getLatValue()+"");
                 lonVar.setText(reseau.getLonValue()+"");
+                //nettoyer la fenêtre de graphique
+                graph.getChildren().clear();
+                areaChart.setLegendVisible(false);
+
+                //on teste si la case graphique est cochée
+                if(reseau.isGraphique()) {
+                    int lat = Integer.valueOf(latVar.getText());
+                    int lon = Integer.valueOf(lonVar.getText());
+                    afficheGraph(graph,reseau,areaChart,secondScene,lat,lon);
+                }
             }
         });
+
+        Float[] tabVal = reseau.recAnomalieZone(12,146);
 
         //Add a camera group
         PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -318,6 +350,30 @@ public class Controller implements Initializable {
         subscene.setCamera(camera);
         subscene.setFill(Color.GREY);
         pane3D.getChildren().addAll(subscene);
+    }
+
+    public void afficheGraph(Pane parent, Reseau res, AreaChart areaChart, Scene secondScene,int lat, int lon){
+        XYChart.Series<Number, Number> serie = new XYChart.Series<Number, Number>();
+        //areaChart.setLegendVisible(true);
+        //on récupère les valeurs d'anomalies pour la zone selectionnée
+        Float[] tabVal = res.recAnomalieZone(lat,lon);
+        //on ajoute toutes les valeurs du tableau au graphique
+        for (int i = 0; i < tabVal.length; i++) {
+            serie.getData().add(new XYChart.Data<Number, Number>(1880 + i, tabVal[i]));
+        }
+        areaChart.setTitle("Coordonnées : "+lat+" "+lon);
+
+        //on ajoute la série ainsi créée au graphique
+        areaChart.getData().add(serie);
+
+        //on ajoute le graphe au pane
+        parent.getChildren().add(areaChart);
+
+        //On crée une nouvelle fenêtre
+        Stage newWindow = new Stage();
+        newWindow.setTitle("Fenêtre du graphique");
+        newWindow.setScene(secondScene);
+        newWindow.show();
     }
 
 
@@ -545,11 +601,11 @@ public class Controller implements Initializable {
      * @param result valeur du pointeur de la souris
      * @param res représente le réseau dans lequel est stocké la valeur des données récupérées
      */
-    public static void cursorToCoords(PickResult result, Reseau res)
+    public static void sourisToCoords(PickResult result, Reseau res)
     {
         Point3D coor = result.getIntersectedPoint();
         res.setLatValue((int)  Math.round(-Math.toDegrees(Math.asin(coor.getY() / Math.sqrt(Math.pow(coor.getX(), 2) + Math.pow(coor.getY(), 2) + Math.pow(coor.getZ(), 2))) ) /4)*4);
-        res.setLonValue((int)  Math.round(-Math.toDegrees(Math.atan2(coor.getX(), coor.getZ()) ) /4)*4);
+        res.setLonValue((int)  Math.round(-Math.toDegrees(Math.atan2(coor.getX(), coor.getZ()) ) /4)*4+2);
     }
 
 
@@ -562,6 +618,13 @@ public class Controller implements Initializable {
         reseau.setHisto(true);
     }
 
+    private void graphClick(MouseEvent event){
+        if (reseau.isGraphique()){
+            reseau.setGraphique(false);
+        }else{
+            reseau.setGraphique(true);
+        }
+    }
     public void setSpeed(int speed) {
         this.speed = speed;
     }

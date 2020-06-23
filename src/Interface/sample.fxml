@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
@@ -176,12 +177,16 @@
                         <Insets left="5.0" right="20.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="longitude" text="Longitude : " />
-                  <Label fx:id="lonVar">
+                  <Label fx:id="longitude" text="Longitude : ">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin></Label>
+                  <Label fx:id="lonVar" prefHeight="17.0" prefWidth="100.0">
                      <padding>
-                        <Insets left="5.0" />
+                        <Insets left="5.0" right="20.0" />
                      </padding>
                   </Label>
+                  <CheckBox fx:id="graphique" mnemonicParsing="false" prefHeight="17.0" prefWidth="127.0" text="Graphique" />
                </children>
             </HBox>
             <Slider fx:id="slidAnnee" majorTickUnit="20.0" max="2020.0" min="1880.0" showTickLabels="true" showTickMarks="true" value="1880.0">

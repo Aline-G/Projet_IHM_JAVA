@@ -17,6 +17,16 @@ public class Reseau {
     private int latValue=-88;
     private int lonValue=-176;
 
+    public void setGraphique(boolean graphique) {
+        this.graphique = graphique;
+    }
+
+    public boolean isGraphique() {
+        return graphique;
+    }
+
+    private boolean graphique = false;
+
     /**
      * Constructeur du réseau
      * implémente les attributs du réseau
