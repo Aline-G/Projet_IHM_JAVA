@@ -14,8 +14,8 @@ public class Reseau {
     Controller controller;
     private boolean Carre =false;
     private boolean Histo = false;
-    private int latValue=-88;
-    private int lonValue=-176;
+    private int latValue=-12;
+    private int lonValue=-154;
 
     public void setGraphique(boolean graphique) {
         this.graphique = graphique;
@@ -159,17 +159,12 @@ public class Reseau {
     public Float[] recAnomalieZone(int lat, int lon){
         Float[] tab = new Float[141];
         int i = 0;
-        String s = "";
         //on parcourt la liste d'années
         for(int key : listeAnnee.keySet()){
             tab[i]=listeAnnee.get(key).recAnomalie(lat,lon);
-            //pour l'affichage
-            s = s +" "+ tab[i];
             //pour avancer dans le tableau tab
             i++;
         }
-        //on affiche les valeurs du tableau
-        System.out.println(s);
         return tab;
     }
 

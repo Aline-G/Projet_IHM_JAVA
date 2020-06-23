@@ -85,8 +85,6 @@ public class Controller implements Initializable {
         this.reseau = new Reseau(donnees, this);
         this.quadrillage = new LinkedHashMap<>();
 
-
-
         //initialisation du quadrillage
         Quadrillage(root3D,reseau);
 
@@ -150,7 +148,7 @@ public class Controller implements Initializable {
         cube6.setMaterial(c2);
         cube7.setMaterial(c1);
 
-        //placement des cubes de légende
+        //placement des cubes de la légende
         cube.setTranslateY(-2.3);
         cube1.setTranslateY(-1.65);
         cube2.setTranslateY(-1);
@@ -171,7 +169,7 @@ public class Controller implements Initializable {
         leg.getChildren().add(cube7);
 
 
-        //mise à jour de l'etat des rb boutons
+        //mise à jour de l'état des radio boutons
         carreRB.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -235,17 +233,12 @@ public class Controller implements Initializable {
             }
         });
 
-        //pour la partie sélectionner un lieu
-        //new PickResult(Node node, Point3D point, double distance, int face, Point2D texCoord);
-
-///je ne vois vraiment pas comment régler la vitesse
         //ANIMATION
         //création de l'animation
         AnimationTimer ani = new AnimationTimer() {
             //final long startNanoTime = System.nanoTime();
             @Override
             public void handle(long currentNanoTime) {
-                //double t = (currentNanoTime-startNanoTime)/(1000000000.0/speed);
                 slidAnnee.setValue((double)annee);
                 //on teste quel mode est choisi si l'année n'est pas trop grande
                 if(reseau.isCarre() && annee<2021 ){
@@ -256,19 +249,12 @@ public class Controller implements Initializable {
                     nettoyage(root3D);
                     dessinCarre(root3D,reseau,annee,c1,c2,c3,c4,c5,c6,c7,c8);
                     int tmp = speed;
-                    //C'est pas ouf ça fait bcp tourner le pc pour pas grand chose
-                    int val = 1000;
-                    val=(int)Math.round(val/speed);
-                    for(int i =0; i<val;  i++ ){
-                        //System.out.println(tmp = tmp-1);
-                    }
-                    /*
+                    //C'est pas très fonctionnel ça fait beaucoup tourner le pc pour pas grand chose
                     while(10-speed!=0){
                         speed = speed -1;
                     }
-                    */
                     annee ++;
-                    //speed=tmp;
+                    speed=tmp;
                 }
                 if(reseau.isHisto() && annee<2021 ){
                     slidAnnee.setValue(annee);
@@ -300,8 +286,7 @@ public class Controller implements Initializable {
         final AreaChart<Number, Number> areaChart = new AreaChart<Number, Number>(xAxis, yAxis);
         areaChart.setMaxSize(500,300);
 
-
-        //event qui permet de récupérer les coordonnées sur le globe pointées par la souris
+        //event qui permet de récupérer les coordonnées sur le globe pointées par la souris et si graphique coché alors nouvelle fenêtre avec le graphique
         root3D.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent event){
@@ -331,12 +316,10 @@ public class Controller implements Initializable {
         new CameraManager(camera, pane3D, root3D);
         new CameraManager(cam, legende, leg);
 
-
         // Add ambient light
         AmbientLight ambientLight = new AmbientLight(Color.WHITE);
         ambientLight.getScope().addAll(root3D);
         root3D.getChildren().add(ambientLight);
-
 
         //Creation de la subscene pour la legende
         SubScene subLeg = new SubScene(leg,50,118,true,SceneAntialiasing.BALANCED);
@@ -352,7 +335,7 @@ public class Controller implements Initializable {
     }
 
     /**
-     * Fonction qui permet de créer une nouvelle fenêtre dans lequel on a mis le graphe associé à la zone selectionnée
+     * Fonction qui permet de créer une nouvelle fenêtre dans lequelle on a mis le graphe associé à la zone selectionnée
      * @param parent pane dans lequel on va dessiner le graphique
      * @param res le réseau dans lequel nous avonstoutes les données
      * @param areaChart le graphique nous allons implémenter avec les bonnes valeurs
@@ -361,6 +344,7 @@ public class Controller implements Initializable {
      * @param lon valeur de la longitude associée au pointeur de la souris
      */
     public void afficheGraph(Pane parent, Reseau res, AreaChart areaChart, Scene secondScene,int lat, int lon){
+        //nettoyage du graphique
         areaChart.getData().clear();
         XYChart.Series<Number, Number> serie = new XYChart.Series<Number, Number>();
 
