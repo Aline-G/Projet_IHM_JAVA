@@ -310,19 +310,18 @@ public class Controller implements Initializable {
                 latVar.setText(reseau.getLatValue()+"");
                 lonVar.setText(reseau.getLonValue()+"");
                 //nettoyer la fenêtre de graphique
-                graph.getChildren().clear();
+
                 areaChart.setLegendVisible(false);
 
                 //on teste si la case graphique est cochée
                 if(reseau.isGraphique()) {
+                    graph.getChildren().clear();
                     int lat = Integer.valueOf(latVar.getText());
                     int lon = Integer.valueOf(lonVar.getText());
                     afficheGraph(graph,reseau,areaChart,secondScene,lat,lon);
                 }
             }
         });
-
-        Float[] tabVal = reseau.recAnomalieZone(12,146);
 
         //Add a camera group
         PerspectiveCamera camera = new PerspectiveCamera(true);
@@ -352,9 +351,19 @@ public class Controller implements Initializable {
         pane3D.getChildren().addAll(subscene);
     }
 
+    /**
+     * Fonction qui permet de créer une nouvelle fenêtre dans lequel on a mis le graphe associé à la zone selectionnée
+     * @param parent pane dans lequel on va dessiner le graphique
+     * @param res le réseau dans lequel nous avonstoutes les données
+     * @param areaChart le graphique nous allons implémenter avec les bonnes valeurs
+     * @param secondScene scene dans laquelle tout est ajouté
+     * @param lat valeur de la latitude associée au pointeur de la souris
+     * @param lon valeur de la longitude associée au pointeur de la souris
+     */
     public void afficheGraph(Pane parent, Reseau res, AreaChart areaChart, Scene secondScene,int lat, int lon){
+        areaChart.getData().clear();
         XYChart.Series<Number, Number> serie = new XYChart.Series<Number, Number>();
-        //areaChart.setLegendVisible(true);
+
         //on récupère les valeurs d'anomalies pour la zone selectionnée
         Float[] tabVal = res.recAnomalieZone(lat,lon);
         //on ajoute toutes les valeurs du tableau au graphique
@@ -565,6 +574,15 @@ public class Controller implements Initializable {
        }
    }
 
+    /**
+     * Fonction qui va dessiner des carrés à l'aide des objets passés en paramètre
+     * @param parent
+     * @param topRight point3D qui représente l'angle en haut à droite du carré
+     * @param bottomRight point3D qui représente l'angle en bas à droite du carré
+     * @param bottomLeft point3D qui représente l'angle en bas à gauche du carré
+     * @param topLeft point3D qui représente l'angle en haut à gauche du carré
+     * @return un MeshView avec tout les carrés dedans
+     */
     private MeshView AddQuadrilateral(Group parent, Point3D topRight, Point3D bottomRight, Point3D bottomLeft, Point3D topLeft)
     {
         final TriangleMesh triangleMesh = new TriangleMesh();
